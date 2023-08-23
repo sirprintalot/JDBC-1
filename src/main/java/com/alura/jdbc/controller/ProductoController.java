@@ -14,7 +14,6 @@ public class ProductoController {
         Connection con = null;
         PreparedStatement preparedStatement = null;
 
-
         try {
             con = new ConnectionFactory().recuperaConexion();
             String updateSQl = "UPDATE products SET NOMBRE = ?, DESCRIPCION = ?, CANTIDAD = ? WHERE ID = " +id;
@@ -31,6 +30,7 @@ public class ProductoController {
 
             if(rowsAffected ==1){
                 JOptionPane.showMessageDialog(null, "Producto modificado correctamente.");
+                System.out.println("Producto modificado");
             }else{
                 JOptionPane.showMessageDialog(null, "No se pudo modificar");
             }
@@ -49,10 +49,10 @@ public class ProductoController {
         Statement statement = con.createStatement();
 
         statement.execute("DELETE FROM PRODUCTS WHERE ID = " + id);
+        System.out.println("Eliminado producto con ID: " + id);
         return statement.getUpdateCount();
         
     }
-
 
 //    21/08/2023
 
@@ -100,7 +100,8 @@ public class ProductoController {
             if (rowsAffected == 1) {
                 resultSet = preparedStatement.getGeneratedKeys();
                 while (resultSet.next()) {
-                    System.out.printf("Producto insertado con ID: ", resultSet.getInt(1));
+//                    System.out.printf("Producto insertado con ID: ", resultSet.getInt(1));
+                    System.out.println("Producto insertado con ID: " + resultSet.getInt(1));
                 }
             } else {
                 throw new SQLException("product insert failed.");
