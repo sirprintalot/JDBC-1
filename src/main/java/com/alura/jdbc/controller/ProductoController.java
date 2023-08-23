@@ -10,23 +10,26 @@ import java.util.*;
 
 public class ProductoController {
 
-    public void modificar(String nombre, String descripcion, Integer id) throws SQLException {
+    public void modificar(String nombre, String descripcion, Integer cantidad, Integer id) throws SQLException {
         Connection con = null;
         PreparedStatement preparedStatement = null;
 
+
         try {
             con = new ConnectionFactory().recuperaConexion();
-            String updateSQl = "UPDATE products SET NOMBRE = ?, DESCRIPCION = ?, ID = ?";
+            String updateSQl = "UPDATE products SET NOMBRE = ?, DESCRIPCION = ?, CANTIDAD = ? WHERE ID = " +id;
 
             preparedStatement = con.prepareStatement(updateSQl);
-
             preparedStatement.setString(1, nombre);
             preparedStatement.setString(2, descripcion);
-            preparedStatement.setInt(3, id);
+            preparedStatement.setInt(3, cantidad);
 
-            int rowsAffectd = preparedStatement.executeUpdate();
+            Statement statement = con.createStatement();
+            int updateCount = statement.getUpdateCount();
 
-            if(rowsAffectd ==1){
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if(rowsAffected ==1){
                 JOptionPane.showMessageDialog(null, "Producto modificado correctamente.");
             }else{
                 JOptionPane.showMessageDialog(null, "No se pudo modificar");
