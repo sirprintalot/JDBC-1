@@ -16,7 +16,7 @@ public class ProductoController {
 
         try {
             con = new ConnectionFactory().recuperaConexion();
-            String updateSQl = "UPDATE products SET NOMBRE = ?, DESCRIPCION = ?, CANTIDAD = ? WHERE ID = " +id;
+            String updateSQl = "UPDATE products SET NOMBRE = ?, DESCRIPCION = ?, CANTIDAD = ? WHERE ID = " + id;
 
             preparedStatement = con.prepareStatement(updateSQl);
             preparedStatement.setString(1, nombre);
@@ -28,17 +28,17 @@ public class ProductoController {
 
             int rowsAffected = preparedStatement.executeUpdate();
 
-            if(rowsAffected ==1){
+            if (rowsAffected == 1) {
                 JOptionPane.showMessageDialog(null, "Producto modificado correctamente.");
                 System.out.println("Producto modificado");
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(null, "No se pudo modificar");
             }
-        }finally {
-            if(preparedStatement != null){
+        } finally {
+            if (preparedStatement != null) {
                 preparedStatement.close();
             }
-            if(con != null){
+            if (con != null) {
                 con.close();
             }
         }
@@ -52,19 +52,19 @@ public class ProductoController {
             con = new ConnectionFactory().recuperaConexion();
 
             String updateSQL = "DELETE FROM PRODUCTS WHERE ID IN (";
-             for(int i = 0; i < ids.size() ; i++ ) {
-                 updateSQL += "?";
-                 if(i < ids.size() - 1){
-                     updateSQL += ",";
-                 }
-             }
-             updateSQL += ")";
+            for (int i = 0; i < ids.size(); i++) {
+                updateSQL += "?";
+                if (i < ids.size() - 1) {
+                    updateSQL += ",";
+                }
+            }
+            updateSQL += ")";
             preparedStatement = con.prepareStatement(updateSQL);
 
-             for(int i = 0; i < ids.size(); i++){
-                 preparedStatement.setInt(i + 1, ids.get(i));
-             }
-             
+            for (int i = 0; i < ids.size(); i++) {
+                preparedStatement.setInt(i + 1, ids.get(i));
+            }
+
             int rowsAffected = preparedStatement.executeUpdate();
 
             if (rowsAffected > 0) {
@@ -75,7 +75,7 @@ public class ProductoController {
                 JOptionPane.showMessageDialog(null, "No se pudo eliminar nungún producto.");
             }
 
-             return rowsAffected;
+            return rowsAffected;
 
         } finally {
             if (preparedStatement != null) {
@@ -93,9 +93,12 @@ public class ProductoController {
         Connection con = new ConnectionFactory().recuperaConexion();
 
         Statement statement = con.createStatement();
-        boolean result = statement.execute("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD FROM PRODUCTS");
+        PreparedStatement preparedStatement = con.prepareStatement("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD FROM " +
+                "PRODUCTS");
 
-        ResultSet resultSet = statement.getResultSet();
+        preparedStatement.execute();
+
+        ResultSet resultSet = preparedStatement.getResultSet();
         List<Map<String, String>> resultList = new ArrayList<>();
 
         while (resultSet.next()) {
