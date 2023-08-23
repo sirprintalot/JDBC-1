@@ -44,14 +44,47 @@ public class ProductoController {
         }
     }
 
-    public int eliminar(Integer id) throws SQLException {
-        Connection con = new ConnectionFactory().recuperaConexion();
-        Statement statement = con.createStatement();
+    public int eliminar(List<Integer> ids) throws SQLException {
+        Connection con = null;
+        PreparedStatement preparedStatement = null;
 
-        statement.execute("DELETE FROM PRODUCTS WHERE ID = " + id);
-        System.out.println("Eliminado producto con ID: " + id);
-        return statement.getUpdateCount();
-        
+        try {
+            con = new ConnectionFactory().recuperaConexion();
+
+            String updateSQL = "DELETE FROM PRODUCTS WHERE ID IN (";
+             for(int i = 0; i < ids.size() ; i++ ) {
+                 updateSQL += "?";
+                 if(i < ids.size() - 1){
+                     updateSQL += ",";
+                 }
+             }
+             updateSQL += ")";
+            preparedStatement = con.prepareStatement(updateSQL);
+
+             for(int i = 0; i < ids.size(); i++){
+                 preparedStatement.setInt(i + 1, ids.get(i));
+             }
+             
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                JOptionPane.showMessageDialog(null, rowsAffected + " Productos eliminado correctamente");
+                System.out.println("producto eliminado con ID: " + ids);
+
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo eliminar nungún producto.");
+            }
+
+             return rowsAffected;
+
+        } finally {
+            if (preparedStatement != null) {
+                preparedStatement.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
     }
 
 //    21/08/2023

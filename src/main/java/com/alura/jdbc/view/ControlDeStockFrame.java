@@ -146,7 +146,7 @@ public class ControlDeStockFrame extends JFrame {
 
         botonEliminar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                eliminar();
+                eliminarProducto();
                 limpiarTabla();
                 cargarTabla();
             }
@@ -199,27 +199,50 @@ public class ControlDeStockFrame extends JFrame {
                 }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
     }
 
-    private void eliminar() {
+    private void eliminarProducto() {
         if (tieneFilaElegida()) {
             JOptionPane.showMessageDialog(this, "Por favor, elije un item");
             return;
         }
-        Optional.ofNullable(modelo.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()))
-                .ifPresentOrElse(fila -> {
-                    Integer id = Integer.valueOf(modelo.getValueAt(tabla.getSelectedRow(), 0).toString());
+         List<Integer> idsToDelete = new ArrayList<>();
+        int[] selectedRows = tabla.getSelectedRows();
+//        System.out.println("Selected Rows: " + Arrays.toString(selectedRows));
+//        System.out.println("Model Row Count: " + modelo.getRowCount());
+//
+        if(selectedRows.length == 0){
+            JOptionPane.showMessageDialog(this, "selecione al menos un producto.");
+        }
 
-                    int cantidadEliminada;
+         for(int selectedRow : tabla.getSelectedRows()){
+             Integer id = Integer.valueOf(modelo.getValueAt(selectedRow, 0).toString());
+             idsToDelete.add(id);
+         }
 
-                    try {
-                        cantidadEliminada = this.productoController.eliminar(id);
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
+         int cantidadEliminada;
 
-                    modelo.removeRow(tabla.getSelectedRow());
+         try{
+             cantidadEliminada = this.productoController.eliminar(idsToDelete);
+         } catch (SQLException e){
+             throw new RuntimeException(e);
+         }
+         for (int i = selectedRows.length - 1; i >= 0 ; i--){
+             modelo.removeRow(selectedRows[i]);
+         }
 
-                    JOptionPane.showMessageDialog(this, cantidadEliminada + " item eliminado con éxito!");
-                }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
+        System.out.println("Productos eliminados correctamente.");
+         
+//        Optional.ofNullable(modelo.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()))
+//                .ifPresentOrElse(fila -> {
+//                    Integer id = Integer.valueOf(modelo.getValueAt(tabla.getSelectedRow(), 0).toString());
+//                    int cantidadEliminada;
+//                    try {
+//                        cantidadEliminada = this.productoController.eliminar(id);
+//                    } catch (SQLException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    modelo.removeRow(tabla.getSelectedRow())
+//                    JOptionPane.showMessageDialog(this, cantidadEliminada + " item eliminado con éxito!");
+//                }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
     }
 
     private void cargarTabla() {
