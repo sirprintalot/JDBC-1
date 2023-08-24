@@ -1,11 +1,11 @@
 package com.alura.jdbc.view;
 
-import java.awt.Color;
-import java.awt.Container;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.*;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -76,6 +76,7 @@ public class ControlDeStockFrame extends JFrame {
         setSize(800, 600);
         setVisible(true);
         setLocationRelativeTo(null);
+        setResizable(false);
     }
 
     private void configurarCamposDelFormulario(Container container) {
@@ -85,6 +86,7 @@ public class ControlDeStockFrame extends JFrame {
         labelCategoria = new JLabel("Categoría del Producto");
 
         labelNombre.setBounds(10, 10, 240, 15);
+        labelNombre.setFont(new Font(Font.MONOSPACED, Font.BOLD, 15));
         labelDescripcion.setBounds(10, 50, 240, 15);
         labelCantidad.setBounds(10, 90, 240, 15);
         labelCategoria.setBounds(10, 130, 240, 15);
@@ -126,38 +128,28 @@ public class ControlDeStockFrame extends JFrame {
     }
 
     private void configurarAccionesDelFormulario() {
-        botonGuardar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    guardar();
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
-                limpiarTabla();
-                cargarTabla();
+        botonGuardar.addActionListener(e -> {
+            try {
+                guardar();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
             }
+            limpiarTabla();
+            cargarTabla();
         });
 
-        botonLimpiar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                limpiarFormulario();
-            }
+        botonLimpiar.addActionListener(e -> limpiarFormulario());
+
+        botonEliminar.addActionListener(e -> {
+            eliminarProducto();
+            limpiarTabla();
+            cargarTabla();
         });
 
-        botonEliminar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                eliminarProducto();
-                limpiarTabla();
-                cargarTabla();
-            }
-        });
-
-        botonModificar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                modificar();
-                limpiarTabla();
-                cargarTabla();
-            }
+        botonModificar.addActionListener(e -> {
+            modificar();
+            limpiarTabla();
+            cargarTabla();
         });
 
         botonReporte.addActionListener(new ActionListener() {
@@ -180,6 +172,7 @@ public class ControlDeStockFrame extends JFrame {
     }
 
     private void modificar() {
+
         if (tieneFilaElegida()) {
             JOptionPane.showMessageDialog(this, "Por favor, elije un item");
             return;
@@ -200,12 +193,24 @@ public class ControlDeStockFrame extends JFrame {
     }
 
     private void eliminarProducto() {
+        int[] selectedRows = tabla.getSelectedRows();
+        
         if (tieneFilaElegida()) {
             JOptionPane.showMessageDialog(this, "Por favor, elije un item");
             return;
         }
+
+
+        int confirmaEleminar = JOptionPane.showConfirmDialog(this,
+                "Esta seguro que desea eliminar " + selectedRows.length + " elementos?", "Eliminar",
+                JOptionPane.YES_NO_OPTION );
+
+        if(confirmaEleminar != JOptionPane.YES_OPTION) {
+            return;
+        }
+
         List<Integer> idsToDelete = new ArrayList<>();
-        int[] selectedRows = tabla.getSelectedRows();
+        
 //        System.out.println("Selected Rows: " + Arrays.toString(selectedRows));
 //        System.out.println("Model Row Count: " + modelo.getRowCount());
 //
