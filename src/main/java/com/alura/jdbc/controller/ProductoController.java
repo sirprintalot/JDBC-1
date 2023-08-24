@@ -13,7 +13,6 @@ public class ProductoController {
     public void modificar(String nombre, String descripcion, Integer cantidad, Integer id) throws SQLException {
         Connection con = null;
         PreparedStatement preparedStatement = null;
-
         try {
             con = new ConnectionFactory().recuperaConexion();
             String updateSQl = "UPDATE products SET NOMBRE = ?, DESCRIPCION = ?, CANTIDAD = ? WHERE ID = " + id;
@@ -22,10 +21,11 @@ public class ProductoController {
             preparedStatement.setString(1, nombre);
             preparedStatement.setString(2, descripcion);
             preparedStatement.setInt(3, cantidad);
-
             Statement statement = con.createStatement();
-            int updateCount = statement.getUpdateCount();
 
+//            int updateCount = statement.getUpdateCount();
+//            System.out.println(updateCount);
+            
             int rowsAffected = preparedStatement.executeUpdate();
 
             if (rowsAffected == 1) {
@@ -118,30 +118,36 @@ public class ProductoController {
 
 
     public void guardar(Map<String, String> producto) throws SQLException {
-        Connection con = null;
-        PreparedStatement preparedStatement = null;
+        Connection con;
+
+        String nombre = producto.get("NOMBRE");
+        String descripcion = producto.get("DESCRIPCION");
+        int cantidad = Integer.parseInt(producto.get("CANTIDAD"));
+        int cantidadMaxima = 50;
+
+        con = new ConnectionFactory().recuperaConexion();
+        String insertSQL = "INSERT INTO products(NOMBRE, DESCRIPCION, CANTIDAD) VALUES(?, ?, ?)";
+
+        PreparedStatement statement = con.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
+        ejecutaRegistro(nombre, descripcion, cantidad, statement);
+
+        con.close();
+
+    }
+
+    private void ejecutaRegistro(String nombre, String descripcion, int cantidad, PreparedStatement statement) throws SQLException {
+
         ResultSet resultSet = null;
 
-        String nombreProducto = producto.get("NOMBRE");
-        String descripcionProducto = producto.get("DESCRIPCION");
-        int cantidadProducto = Integer.parseInt(producto.get("CANTIDAD"));
-        int cantidadMaxima = 50;
-        
-
         try {
-            con = new ConnectionFactory().recuperaConexion();
-            String insertSQL = "INSERT INTO products(NOMBRE, DESCRIPCION, CANTIDAD) VALUES(?, ?, ?)";
+            statement.setString(1, nombre);
+            statement.setString(2, descripcion);
+            statement.setInt(3, cantidad);
 
-            preparedStatement = con.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
-            
-            preparedStatement.setString(1, nombreProducto );
-            preparedStatement.setString(2, descripcionProducto);
-            preparedStatement.setInt(3, cantidadProducto);
-
-            int rowsAffected = preparedStatement.executeUpdate();
+            int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected == 1) {
-                resultSet = preparedStatement.getGeneratedKeys();
+                resultSet = statement.getGeneratedKeys();
                 while (resultSet.next()) {
 //                    System.out.printf("Producto insertado con ID: ", resultSet.getInt(1));
                     System.out.println("Producto insertado con ID: " + resultSet.getInt(1));
@@ -153,14 +159,12 @@ public class ProductoController {
             if (resultSet != null) {
                 resultSet.close();
             }
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (con != null) {
-                con.close();
+            if (statement != null) {
+                statement.close();
             }
         }
     }
-}
 
+
+}
 
