@@ -194,23 +194,22 @@ public class ControlDeStockFrame extends JFrame {
 
     private void eliminarProducto() {
         int[] selectedRows = tabla.getSelectedRows();
-        
+
         if (tieneFilaElegida()) {
             JOptionPane.showMessageDialog(this, "Por favor, elije un item");
             return;
         }
 
-
         int confirmaEleminar = JOptionPane.showConfirmDialog(this,
                 "Esta seguro que desea eliminar " + selectedRows.length + " elementos?", "Eliminar",
-                JOptionPane.YES_NO_OPTION );
+                JOptionPane.YES_NO_OPTION);
 
-        if(confirmaEleminar != JOptionPane.YES_OPTION) {
+        if (confirmaEleminar != JOptionPane.YES_OPTION) {
             return;
         }
 
         List<Integer> idsToDelete = new ArrayList<>();
-        
+
 //        System.out.println("Selected Rows: " + Arrays.toString(selectedRows));
 //        System.out.println("Model Row Count: " + modelo.getRowCount());
 //

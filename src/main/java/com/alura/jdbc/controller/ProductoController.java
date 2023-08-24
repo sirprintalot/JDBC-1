@@ -122,14 +122,21 @@ public class ProductoController {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
+        String nombreProducto = producto.get("NOMBRE");
+        String descripcionProducto = producto.get("DESCRIPCION");
+        int cantidadProducto = Integer.parseInt(producto.get("CANTIDAD"));
+        int cantidadMaxima = 50;
+        
+
         try {
             con = new ConnectionFactory().recuperaConexion();
             String insertSQL = "INSERT INTO products(NOMBRE, DESCRIPCION, CANTIDAD) VALUES(?, ?, ?)";
 
             preparedStatement = con.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, producto.get("NOMBRE"));
-            preparedStatement.setString(2, producto.get("DESCRIPCION"));
-            preparedStatement.setInt(3, Integer.parseInt(producto.get("CANTIDAD")));
+            
+            preparedStatement.setString(1, nombreProducto );
+            preparedStatement.setString(2, descripcionProducto);
+            preparedStatement.setInt(3, cantidadProducto);
 
             int rowsAffected = preparedStatement.executeUpdate();
 
@@ -156,21 +163,4 @@ public class ProductoController {
     }
 }
 
-//     PRIMER METODO
-//    public void guardar(Map<String, String> producto) throws SQLException{
-//        Connection con = new ConnectionFactory().recuperaConexion();
-//
-//        Statement statement = con.createStatement();
-//
-//        statement.execute( "INSERT INTO products(NOMBRE, DESCRIPCION, CANTIDAD) " +   "VALUES('"+ producto.get(
-//                "NOMBRE") + "' , '"+ producto.get("DESCRIPCION") + "', "+ producto.get("CANTIDAD") + ")",
-//                Statement.RETURN_GENERATED_KEYS);
-//
-//        ResultSet resultSet = statement.getGeneratedKeys();
-//
-//        while(resultSet.next()){
-//            System.out.printf("Insertado el producto con ID %d%n",
-//                    resultSet.getInt(1));
-//        }
-//
-//    }
+
