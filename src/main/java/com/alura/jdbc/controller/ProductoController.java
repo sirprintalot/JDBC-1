@@ -17,6 +17,7 @@ public class ProductoController {
             con = new ConnectionFactory().recuperaConexion();
             String updateSQl = "UPDATE products SET NOMBRE = ?, DESCRIPCION = ?, CANTIDAD = ? WHERE ID = " + id;
 
+//            TODO use the ejecutaRegistro() for this
             preparedStatement = con.prepareStatement(updateSQl);
             preparedStatement.setString(1, nombre);
             preparedStatement.setString(2, descripcion);
@@ -25,7 +26,7 @@ public class ProductoController {
 
 //            int updateCount = statement.getUpdateCount();
 //            System.out.println(updateCount);
-            
+
             int rowsAffected = preparedStatement.executeUpdate();
 
             if (rowsAffected == 1) {
@@ -116,28 +117,46 @@ public class ProductoController {
         return resultList;
     }
 
+// 2023/08/23
 
     public void guardar(Map<String, String> producto) throws SQLException {
         Connection con;
-
         String nombre = producto.get("NOMBRE");
         String descripcion = producto.get("DESCRIPCION");
         int cantidad = Integer.parseInt(producto.get("CANTIDAD"));
         int cantidadMaxima = 50;
 
         con = new ConnectionFactory().recuperaConexion();
+        con.setAutoCommit(false);
         String insertSQL = "INSERT INTO products(NOMBRE, DESCRIPCION, CANTIDAD) VALUES(?, ?, ?)";
-
         PreparedStatement statement = con.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
-        ejecutaRegistro(nombre, descripcion, cantidad, statement);
 
-        con.close();
-
+        try {
+            do {
+                int cantidadParaGuardar = Math.min(cantidad, cantidadMaxima);
+                ejecutaRegistro(nombre, descripcion, cantidadParaGuardar, statement);
+                cantidad -= cantidadMaxima;
+            } while (cantidad > 0);
+            con.commit();
+        }
+        catch(Exception e){
+            con.rollback();
+        }
+        finally {
+            if (statement != null) {
+                statement.close();
+            }
+            con.close();
+        }
     }
 
     private void ejecutaRegistro(String nombre, String descripcion, int cantidad, PreparedStatement statement) throws SQLException {
 
         ResultSet resultSet = null;
+
+//        if(cantidad < 50){
+//            throw new RuntimeException("error de prueba ");
+//        }
 
         try {
             statement.setString(1, nombre);
@@ -158,9 +177,6 @@ public class ProductoController {
         } finally {
             if (resultSet != null) {
                 resultSet.close();
-            }
-            if (statement != null) {
-                statement.close();
             }
         }
     }
