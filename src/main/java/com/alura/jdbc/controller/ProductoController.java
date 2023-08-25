@@ -11,79 +11,54 @@ import java.util.*;
 public class ProductoController {
 
     public void modificar(String nombre, String descripcion, Integer cantidad, Integer id) throws SQLException {
-        Connection con = null;
-        PreparedStatement preparedStatement = null;
-        try {
-            con = new ConnectionFactory().recuperaConexion();
+        final Connection con = new ConnectionFactory().recuperaConexion();
+        try (con) {
             String updateSQl = "UPDATE products SET NOMBRE = ?, DESCRIPCION = ?, CANTIDAD = ? WHERE ID = " + id;
 
-//            TODO use the ejecutaRegistro() for this
-            preparedStatement = con.prepareStatement(updateSQl);
-            preparedStatement.setString(1, nombre);
-            preparedStatement.setString(2, descripcion);
-            preparedStatement.setInt(3, cantidad);
-            Statement statement = con.createStatement();
+//          TODO use the ejecutaRegistro() for this
+            final PreparedStatement preparedStatement = con.prepareStatement(updateSQl);
+            try (preparedStatement) {
+                preparedStatement.setString(1, nombre);
+                preparedStatement.setString(2, descripcion);
+                preparedStatement.setInt(3, cantidad);
+                Statement statement = con.createStatement();
 
-//            int updateCount = statement.getUpdateCount();
-//            System.out.println(updateCount);
-
-            int rowsAffected = preparedStatement.executeUpdate();
-
-            if (rowsAffected == 1) {
-                JOptionPane.showMessageDialog(null, "Producto modificado correctamente.");
-                System.out.println("Producto modificado");
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo modificar");
-            }
-        } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (con != null) {
-                con.close();
+                int rowsAffected = preparedStatement.executeUpdate();
+                if (rowsAffected == 1) {
+                    JOptionPane.showMessageDialog(null, "Producto modificado correctamente.");
+                    System.out.println("Producto modificado");
+                } else {
+                    JOptionPane.showMessageDialog(null, "No se pudo modificar");
+                }
             }
         }
     }
 
     public int eliminar(List<Integer> ids) throws SQLException {
-        Connection con = null;
-        PreparedStatement preparedStatement = null;
-
-        try {
-            con = new ConnectionFactory().recuperaConexion();
-
-            String updateSQL = "DELETE FROM PRODUCTS WHERE ID IN (";
+         final Connection con = new ConnectionFactory().recuperaConexion();
+        try (con) {
+            StringBuilder updateSQL = new StringBuilder("DELETE FROM PRODUCTS WHERE ID IN (");
             for (int i = 0; i < ids.size(); i++) {
-                updateSQL += "?";
+                updateSQL.append("?");
                 if (i < ids.size() - 1) {
-                    updateSQL += ",";
+                    updateSQL.append(",");
                 }
             }
-            updateSQL += ")";
-            preparedStatement = con.prepareStatement(updateSQL);
+            updateSQL.append(")");
 
-            for (int i = 0; i < ids.size(); i++) {
-                preparedStatement.setInt(i + 1, ids.get(i));
-            }
-
-            int rowsAffected = preparedStatement.executeUpdate();
-
-            if (rowsAffected > 0) {
-                JOptionPane.showMessageDialog(null, rowsAffected + " Productos eliminado correctamente");
-                System.out.println("producto eliminado con ID: " + ids);
-
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo eliminar nungún producto.");
-            }
-
-            return rowsAffected;
-
-        } finally {
-            if (preparedStatement != null) {
-                preparedStatement.close();
-            }
-            if (con != null) {
-                con.close();
+            final PreparedStatement preparedStatement = con.prepareStatement(updateSQL.toString());
+            try (preparedStatement) {
+                for (int i = 0; i < ids.size(); i++) {
+                    preparedStatement.setInt(i + 1, ids.get(i));
+                }
+                int rowsAffected = preparedStatement.executeUpdate();
+                if (rowsAffected > 0) {
+                    JOptionPane.showMessageDialog(null, rowsAffected + " Productos eliminado correctamente");
+                    System.out.println("producto eliminado con ID: " + ids);
+                } else {
+                    JOptionPane.showMessageDialog(null, "No se pudo eliminar nungún producto.");
+                }
+                return rowsAffected;
             }
         }
     }
@@ -91,80 +66,75 @@ public class ProductoController {
 //    21/08/2023
 
     public List<Map<String, String>> listar() throws SQLException {
-        Connection con = new ConnectionFactory().recuperaConexion();
 
-        Statement statement = con.createStatement();
-        PreparedStatement preparedStatement = con.prepareStatement("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD FROM " +
-                "PRODUCTS");
+        final Connection con = new ConnectionFactory().recuperaConexion();
+        try (con) {
+            
+            final PreparedStatement preparedStatement = con.prepareStatement("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD FROM " +
+                    "PRODUCTS");
+            try (preparedStatement) {
 
-        preparedStatement.execute();
+                preparedStatement.execute();
+                ResultSet resultSet = preparedStatement.getResultSet();
+                List<Map<String, String>> resultList = new ArrayList<>();
 
-        ResultSet resultSet = preparedStatement.getResultSet();
-        List<Map<String, String>> resultList = new ArrayList<>();
+                while (resultSet.next()) {
+                    Map<String, String> row = new HashMap<>();
 
-        while (resultSet.next()) {
-            Map<String, String> row = new HashMap<>();
-
-            row.put("ID", String.valueOf(resultSet.getInt("ID")));
-            row.put("NOMBRE", resultSet.getString("NOMBRE"));
-            row.put("DESCRIPCION", resultSet.getString("DESCRIPCION"));
-            row.put("CANTIDAD", String.valueOf(resultSet.getInt("CANTIDAD")));
-
-            resultList.add(row);
-
+                    row.put("ID", String.valueOf(resultSet.getInt("ID")));
+                    row.put("NOMBRE", resultSet.getString("NOMBRE"));
+                    row.put("DESCRIPCION", resultSet.getString("DESCRIPCION"));
+                    row.put("CANTIDAD", String.valueOf(resultSet.getInt("CANTIDAD")));
+                    resultList.add(row);
+                }
+                return resultList;
+            }
         }
-        con.close();
-        return resultList;
     }
 
 // 2023/08/23
 
     public void guardar(Map<String, String> producto) throws SQLException {
-        Connection con;
         String nombre = producto.get("NOMBRE");
         String descripcion = producto.get("DESCRIPCION");
         int cantidad = Integer.parseInt(producto.get("CANTIDAD"));
         int cantidadMaxima = 50;
-        con = new ConnectionFactory().recuperaConexion();
-        con.setAutoCommit(false);
-        String insertSQL = "INSERT INTO products(NOMBRE, DESCRIPCION, CANTIDAD) VALUES(?, ?, ?)";
-        PreparedStatement statement = con.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
+        final Connection con = new ConnectionFactory().recuperaConexion();
 
-        try {
-            do {
-                int cantidadParaGuardar = Math.min(cantidad, cantidadMaxima);
-                ejecutaRegistro(nombre, descripcion, cantidadParaGuardar, statement);
-                cantidad -= cantidadMaxima;
-            } while (cantidad > 0);
-            con.commit();
-        }
-        catch(Exception e){
-            con.rollback();
-        }
-        finally {
-            if (statement != null) {
-                statement.close();
+        try (con) {
+            con.setAutoCommit(false);
+            String insertSQL = "INSERT INTO products(NOMBRE, DESCRIPCION, CANTIDAD) VALUES(?, ?, ?)";
+
+            final PreparedStatement statement = con.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
+            try (statement) {
+                do {
+                    int cantidadParaGuardar = Math.min(cantidad, cantidadMaxima);
+                    ejecutaRegistro(nombre, descripcion, cantidadParaGuardar, statement);
+                    cantidad -= cantidadMaxima;
+                } while (cantidad > 0);
+                con.commit();
+            } catch (Exception e) {
+                con.rollback();
             }
-            con.close();
         }
     }
 
     private void ejecutaRegistro(String nombre, String descripcion, int cantidad, PreparedStatement statement) throws SQLException {
-        
+
         statement.setString(1, nombre);
         statement.setString(2, descripcion);
         statement.setInt(3, cantidad);
         int rowsAffected = statement.executeUpdate();
 
-        if(rowsAffected== 1){
-            try(ResultSet resultSet = statement.getGeneratedKeys();){
-                while (resultSet.next()){
+        if (rowsAffected == 1) {
+            final ResultSet resultSet = statement.getGeneratedKeys();
+            try (resultSet) {
+                while (resultSet.next()) {
                     System.out.println("producto ingresado correctamente");
                 }
             }
-        }
-        else{
-           throw new SQLException("Error");
+        } else {
+            throw new SQLException("Error");
         }
     }
 
