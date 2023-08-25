@@ -125,7 +125,6 @@ public class ProductoController {
         String descripcion = producto.get("DESCRIPCION");
         int cantidad = Integer.parseInt(producto.get("CANTIDAD"));
         int cantidadMaxima = 50;
-
         con = new ConnectionFactory().recuperaConexion();
         con.setAutoCommit(false);
         String insertSQL = "INSERT INTO products(NOMBRE, DESCRIPCION, CANTIDAD) VALUES(?, ?, ?)";
@@ -151,33 +150,21 @@ public class ProductoController {
     }
 
     private void ejecutaRegistro(String nombre, String descripcion, int cantidad, PreparedStatement statement) throws SQLException {
+        
+        statement.setString(1, nombre);
+        statement.setString(2, descripcion);
+        statement.setInt(3, cantidad);
+        int rowsAffected = statement.executeUpdate();
 
-        ResultSet resultSet = null;
-
-//        if(cantidad < 50){
-//            throw new RuntimeException("error de prueba ");
-//        }
-
-        try {
-            statement.setString(1, nombre);
-            statement.setString(2, descripcion);
-            statement.setInt(3, cantidad);
-
-            int rowsAffected = statement.executeUpdate();
-
-            if (rowsAffected == 1) {
-                resultSet = statement.getGeneratedKeys();
-                while (resultSet.next()) {
-//                    System.out.printf("Producto insertado con ID: ", resultSet.getInt(1));
-                    System.out.println("Producto insertado con ID: " + resultSet.getInt(1));
+        if(rowsAffected== 1){
+            try(ResultSet resultSet = statement.getGeneratedKeys();){
+                while (resultSet.next()){
+                    System.out.println("producto ingresado correctamente");
                 }
-            } else {
-                throw new SQLException("product insert failed.");
             }
-        } finally {
-            if (resultSet != null) {
-                resultSet.close();
-            }
+        }
+        else{
+           throw new SQLException("Error");
         }
     }
 
