@@ -1,9 +1,7 @@
 package com.alura.jdbc.controller;
 
 import com.alura.jdbc.factory.*;
-import com.mysql.cj.jdbc.*;
 
-import javax.print.attribute.standard.*;
 import javax.swing.*;
 import java.sql.*;
 import java.util.*;
@@ -13,6 +11,7 @@ public class ProductoController {
     public void modificar(String nombre, String descripcion, Integer cantidad, Integer id) throws SQLException {
         final Connection con = new ConnectionFactory().recuperaConexion();
         try (con) {
+//            TODO use preparedStatement
             String updateSQl = "UPDATE products SET NOMBRE = ?, DESCRIPCION = ?, CANTIDAD = ? WHERE ID = " + id;
 
 //          TODO use the ejecutaRegistro() for this
@@ -35,7 +34,7 @@ public class ProductoController {
     }
 
     public int eliminar(List<Integer> ids) throws SQLException {
-         final Connection con = new ConnectionFactory().recuperaConexion();
+        final Connection con = new ConnectionFactory().recuperaConexion();
         try (con) {
             StringBuilder updateSQL = new StringBuilder("DELETE FROM PRODUCTS WHERE ID IN (");
             for (int i = 0; i < ids.size(); i++) {
@@ -69,7 +68,7 @@ public class ProductoController {
 
         final Connection con = new ConnectionFactory().recuperaConexion();
         try (con) {
-            
+
             final PreparedStatement preparedStatement = con.prepareStatement("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD FROM " +
                     "PRODUCTS");
             try (preparedStatement) {
@@ -98,7 +97,7 @@ public class ProductoController {
         String nombre = producto.get("NOMBRE");
         String descripcion = producto.get("DESCRIPCION");
         int cantidad = Integer.parseInt(producto.get("CANTIDAD"));
-        int cantidadMaxima = 50;
+        final int CANTIDAD_MAXIMA = 50;
         final Connection con = new ConnectionFactory().recuperaConexion();
 
         try (con) {
@@ -108,9 +107,9 @@ public class ProductoController {
             final PreparedStatement statement = con.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
             try (statement) {
                 do {
-                    int cantidadParaGuardar = Math.min(cantidad, cantidadMaxima);
+                    int cantidadParaGuardar = Math.min(cantidad, CANTIDAD_MAXIMA);
                     ejecutaRegistro(nombre, descripcion, cantidadParaGuardar, statement);
-                    cantidad -= cantidadMaxima;
+                    cantidad -= CANTIDAD_MAXIMA;
                 } while (cantidad > 0);
                 con.commit();
             } catch (Exception e) {
