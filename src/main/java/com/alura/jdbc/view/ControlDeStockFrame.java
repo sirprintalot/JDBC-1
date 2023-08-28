@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.alura.jdbc.controller.CategoriaController;
 import com.alura.jdbc.controller.ProductoController;
+import com.alura.jdbc.modelo.*;
 
 public class ControlDeStockFrame extends JFrame {
 
@@ -211,7 +212,7 @@ public class ControlDeStockFrame extends JFrame {
         List<Integer> idsToDelete = new ArrayList<>();
 
 //        System.out.println("Selected Rows: " + Arrays.toString(selectedRows));
-//        System.out.println("Model Row Count: " + modelo.getRowCount());
+//        System.out.println("Model Row Count: " + com.alura.jdbc.modelo.getRowCount());
 //
         if (selectedRows.length == 0) {
             JOptionPane.showMessageDialog(this, "selecione al menos un producto.");
@@ -235,35 +236,32 @@ public class ControlDeStockFrame extends JFrame {
 
         System.out.println("Productos eliminados correctamente.");
 
-//        Optional.ofNullable(modelo.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()))
+//        Optional.ofNullable(com.alura.jdbc.modelo.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()))
 //                .ifPresentOrElse(fila -> {
-//                    Integer id = Integer.valueOf(modelo.getValueAt(tabla.getSelectedRow(), 0).toString());
+//                    Integer id = Integer.valueOf(com.alura.jdbc.modelo.getValueAt(tabla.getSelectedRow(), 0).toString());
 //                    int cantidadEliminada;
 //                    try {
 //                        cantidadEliminada = this.productoController.eliminar(id);
 //                    } catch (SQLException e) {
 //                        throw new RuntimeException(e);
 //                    }
-//                    modelo.removeRow(tabla.getSelectedRow())
+//                    com.alura.jdbc.modelo.removeRow(tabla.getSelectedRow())
 //                    JOptionPane.showMessageDialog(this, cantidadEliminada + " item eliminado con éxito!");
 //                }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
     }
 
     private void cargarTabla() {
-        try {
             var productos = this.productoController.listar();
-            try {
-                productos.forEach(producto -> modelo.addRow(new Object[]{producto.get("ID"),
-                        producto.get("NOMBRE"), producto.get("DESCRIPCION"),
-                        producto.get("CANTIDAD")}));
-            } catch (Exception e) {
-                throw e;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
+                productos.forEach(producto -> modelo.addRow(new Object[]{
+                        producto.getId(),
+                        producto.getNombre(),
+                        producto.getDescripcion(),
+                        producto.getCantidad()
+            }));
 
     }
+
 
     private void guardar() throws SQLException {
         if (textoNombre.getText().isBlank() || textoDescripcion.getText().isBlank()) {
@@ -279,20 +277,22 @@ public class ControlDeStockFrame extends JFrame {
             return;
         }
         // TODO
-        var producto = new HashMap<String, String>();
-        producto.put("NOMBRE", textoNombre.getText());
-        producto.put("DESCRIPCION", textoDescripcion.getText());
-        producto.put("CANTIDAD", String.valueOf(cantidadInt));
+//        var producto = new HashMap<String, String>();
+//        producto.put("NOMBRE", textoNombre.getText());
+//        producto.put("DESCRIPCION", textoDescripcion.getText());
+//        producto.put("CANTIDAD", String.valueOf(cantidadInt));
+
+        var producto = new Producto(textoNombre.getText(), textoDescripcion.getText(), cantidadInt);
 
         var categoria = comboCategoria.getSelectedItem();
-
-        try {
-            this.productoController.guardar(producto);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-
+        this.productoController.guardar(producto);
+//
+//        try {
+//            this.productoController.guardar(producto);
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+        
         JOptionPane.showMessageDialog(this, "Registrado con éxito!");
 
         this.limpiarFormulario();
