@@ -1,12 +1,24 @@
 package com.alura.jdbc.factory;
 
+import com.mchange.v2.c3p0.*;
+
+import javax.sql.*;
 import java.sql.*;
 
 public class ConnectionFactory {
+
+    private DataSource dataSource;
+
+    public ConnectionFactory(){
+        var pooleDataSource = new ComboPooledDataSource();
+        pooleDataSource.setJdbcUrl("jdbc:mysql://localhost/stock_control?useTimeZone=true&serverTimeZone=UTC");
+        pooleDataSource.setUser("root");
+        pooleDataSource.setPassword("maucaralar");
+
+        this.dataSource = pooleDataSource;
+    }
+    
     public Connection recuperaConexion() throws SQLException {
-        return DriverManager.getConnection(
-                "jdbc:mysql://localhost/stock_control?useTimeZone=true&serverTimeZone=UTC",
-                "root",
-                "maucaralar");
+        return this.dataSource.getConnection();
     }
 }

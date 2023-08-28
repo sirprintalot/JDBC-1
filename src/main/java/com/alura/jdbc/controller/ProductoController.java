@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.sql.*;
 import java.util.*;
 
+//TODO make controlDeStockFrame handle the messages
 public class ProductoController {
 
     public void modificar(String nombre, String descripcion, Integer cantidad, Integer id) throws SQLException {
