@@ -142,7 +142,7 @@ public class ControlDeStockFrame extends JFrame {
         botonLimpiar.addActionListener(e -> limpiarFormulario());
 
         botonEliminar.addActionListener(e -> {
-            eliminarProducto();
+            eliminar();
             limpiarTabla();
             cargarTabla();
         });
@@ -185,15 +185,12 @@ public class ControlDeStockFrame extends JFrame {
                     String descripcion = (String) modelo.getValueAt(tabla.getSelectedRow(), 2);
                     Integer cantidad = Integer.valueOf(modelo.getValueAt(tabla.getSelectedRow(), 3).toString());
 
-                    try {
-                        this.productoController.modificar(nombre, descripcion, cantidad, id);
-                    } catch (SQLException e) {
-                        throw new RuntimeException(e);
-                    }
+                        this.productoController.modificar(new Producto(id, nombre, descripcion,cantidad));
+
                 }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
     }
 
-    private void eliminarProducto() {
+    private void eliminar() {
         int[] selectedRows = tabla.getSelectedRows();
 
         if (tieneFilaElegida()) {
@@ -211,9 +208,6 @@ public class ControlDeStockFrame extends JFrame {
 
         List<Integer> idsToDelete = new ArrayList<>();
 
-//        System.out.println("Selected Rows: " + Arrays.toString(selectedRows));
-//        System.out.println("Model Row Count: " + com.alura.jdbc.modelo.getRowCount());
-//
         if (selectedRows.length == 0) {
             JOptionPane.showMessageDialog(this, "selecione al menos un producto.");
         }
@@ -225,50 +219,34 @@ public class ControlDeStockFrame extends JFrame {
 
         int cantidadEliminada;
 
-        try {
-            cantidadEliminada = this.productoController.eliminar(idsToDelete);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        cantidadEliminada = this.productoController.eliminar(idsToDelete);
         for (int i = selectedRows.length - 1; i >= 0; i--) {
             modelo.removeRow(selectedRows[i]);
         }
 
+        JOptionPane.showMessageDialog(this, cantidadEliminada + " Productos eliminados correctamente.");
         System.out.println("Productos eliminados correctamente.");
 
-//        Optional.ofNullable(com.alura.jdbc.modelo.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()))
-//                .ifPresentOrElse(fila -> {
-//                    Integer id = Integer.valueOf(com.alura.jdbc.modelo.getValueAt(tabla.getSelectedRow(), 0).toString());
-//                    int cantidadEliminada;
-//                    try {
-//                        cantidadEliminada = this.productoController.eliminar(id);
-//                    } catch (SQLException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                    com.alura.jdbc.modelo.removeRow(tabla.getSelectedRow())
-//                    JOptionPane.showMessageDialog(this, cantidadEliminada + " item eliminado con éxito!");
-//                }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
     }
 
     private void cargarTabla() {
-            var productos = this.productoController.listar();
+        var productos = this.productoController.listar();
 
-                productos.forEach(producto -> modelo.addRow(new Object[]{
-                        producto.getId(),
-                        producto.getNombre(),
-                        producto.getDescripcion(),
-                        producto.getCantidad()
-            }));
+        productos.forEach(producto -> modelo.addRow(new Object[]{
+                producto.getId(),
+                producto.getNombre(),
+                producto.getDescripcion(),
+                producto.getCantidad()
+        }));
 
     }
-
 
     private void guardar() throws SQLException {
         if (textoNombre.getText().isBlank() || textoDescripcion.getText().isBlank()) {
             JOptionPane.showMessageDialog(this, "Los campos Nombre y Descripción son requeridos.");
             return;
         }
-        Integer cantidadInt;
+        int cantidadInt;
         try {
             cantidadInt = Integer.parseInt(textoCantidad.getText());
         } catch (NumberFormatException e) {
@@ -292,7 +270,7 @@ public class ControlDeStockFrame extends JFrame {
 //        } catch (SQLException e) {
 //            throw new RuntimeException(e);
 //        }
-        
+
         JOptionPane.showMessageDialog(this, "Registrado con éxito!");
 
         this.limpiarFormulario();

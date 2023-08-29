@@ -14,7 +14,7 @@ public class ConnectionFactory {
         pooleDataSource.setJdbcUrl("jdbc:mysql://localhost/stock_control?useTimeZone=true&serverTimeZone=UTC");
         pooleDataSource.setUser("root");
         pooleDataSource.setPassword("maucaralar");
-        pooleDataSource.setMaxPoolSize(10);
+        pooleDataSource.setMaxPoolSize(50);
 
         this.dataSource = pooleDataSource;
     }

@@ -17,72 +17,24 @@ public class ProductoController {
         this.productoDAO = new ProductoDAO(new ConnectionFactory().recuperaConexion());
     }
 
-    public void modificar(String nombre, String descripcion, Integer cantidad, Integer id) throws SQLException {
-        final Connection con = new ConnectionFactory().recuperaConexion();
-        try (con) {
-//            TODO use preparedStatement
-            String updateSQl = "UPDATE products SET NOMBRE = ?, DESCRIPCION = ?, CANTIDAD = ? WHERE ID = " + id;
-
-//          TODO use the ejecutaRegistro() for this
-            final PreparedStatement preparedStatement = con.prepareStatement(updateSQl);
-            try (preparedStatement) {
-                preparedStatement.setString(1, nombre);
-                preparedStatement.setString(2, descripcion);
-                preparedStatement.setInt(3, cantidad);
-                Statement statement = con.createStatement();
-
-                int rowsAffected = preparedStatement.executeUpdate();
-                if (rowsAffected == 1) {
-                    JOptionPane.showMessageDialog(null, "Producto modificado correctamente.");
-                    System.out.println("Producto modificado");
-                } else {
-                    JOptionPane.showMessageDialog(null, "No se pudo modificar");
-                }
-            }
-        }
+    public void modificar(Producto producto)  {
+         productoDAO.modificarProducto(producto);
     }
 
-    public int eliminar(List<Integer> ids) throws SQLException {
-        final Connection con = new ConnectionFactory().recuperaConexion();
-        try (con) {
-            StringBuilder updateSQL = new StringBuilder("DELETE FROM PRODUCTS WHERE ID IN (");
-            for (int i = 0; i < ids.size(); i++) {
-                updateSQL.append("?");
-                if (i < ids.size() - 1) {
-                    updateSQL.append(",");
-                }
-            }
-            updateSQL.append(")");
-
-            final PreparedStatement preparedStatement = con.prepareStatement(updateSQL.toString());
-            try (preparedStatement) {
-                for (int i = 0; i < ids.size(); i++) {
-                    preparedStatement.setInt(i + 1, ids.get(i));
-                }
-                int rowsAffected = preparedStatement.executeUpdate();
-                if (rowsAffected > 0) {
-                    JOptionPane.showMessageDialog(null, rowsAffected + " Productos eliminado correctamente");
-                    System.out.println("producto eliminado con ID: " + ids);
-                } else {
-                    JOptionPane.showMessageDialog(null, "No se pudo eliminar nungún producto.");
-                }
-                return rowsAffected;
-            }
-        }
+// 28/08/2023
+    public int eliminar(List<Integer> ids) {
+         return productoDAO.eliminarProductos(ids);
     }
 
 //    21/08/2023
 
     public List<Producto> listar() {
-        return productoDAO.listar();
-
+        return productoDAO.listarProducto();
     }
 
 // 2023/08/23
 
     public void guardar(Producto producto) {
-
-//        ProductoDAO productoDao = new ProductoDAO(new ConnectionFactory().recuperaConexion());
         productoDAO.guardarProducto(producto);
        
     }
