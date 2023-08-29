@@ -2,6 +2,7 @@ package com.alura.jdbc.DAO;
 
 import com.alura.jdbc.factory.*;
 import com.alura.jdbc.modelo.*;
+
 import javax.swing.*;
 import java.sql.*;
 import java.util.*;
@@ -18,7 +19,7 @@ public class ProductoDAO {
 
         int cantidad = producto.getCantidad();
         final int CANTIDAD_MAXIMA = 50;
-//        final Connection con = new ConnectionFactory().recuperaConexion();
+        final Connection con = new ConnectionFactory().recuperaConexion();
         try (con) {
             con.setAutoCommit(false);
             String insertSQL = "INSERT INTO products(NOMBRE, DESCRIPCION, CANTIDAD) VALUES(?, ?, ?)";
@@ -89,7 +90,7 @@ public class ProductoDAO {
 
     public int eliminarProductos(List<Integer> ids) {
 
-//        final Connection con = new ConnectionFactory().recuperaConexion();
+        final Connection con = new ConnectionFactory().recuperaConexion();
         try (con) {
             StringBuilder updateSQL = new StringBuilder("DELETE FROM PRODUCTS WHERE ID IN (");
             for (int i = 0; i < ids.size(); i++) {
