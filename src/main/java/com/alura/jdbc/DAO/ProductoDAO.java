@@ -22,7 +22,12 @@ public class ProductoDAO {
         final Connection con = new ConnectionFactory().recuperaConexion();
         try (con) {
             con.setAutoCommit(false);
-            String insertSQL = "INSERT INTO products(NOMBRE, DESCRIPCION, CANTIDAD) VALUES(?, ?, ?)";
+            String insertSQL = "INSERT INTO products(NOMBRE, " +
+                    "DESCRIPCION, " +
+                    "CANTIDAD, " +
+                    "categoria_Id) " +
+                    "VALUES(?, ?, ?, ?)";
+            
             final PreparedStatement preparedStatement = con.prepareStatement(insertSQL, Statement.RETURN_GENERATED_KEYS);
             try (preparedStatement) {
                 do {
@@ -44,6 +49,7 @@ public class ProductoDAO {
         statement.setString(1, producto.getNombre());
         statement.setString(2, producto.getDescripcion());
         statement.setInt(3, producto.getCantidad());
+        statement.setInt(4, producto.getCategoriaId());
         int rowsAffected = statement.executeUpdate();
 
         if (rowsAffected == 1) {

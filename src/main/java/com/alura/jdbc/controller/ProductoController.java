@@ -34,7 +34,8 @@ public class ProductoController {
 
 // 2023/08/23
 
-    public void guardar(Producto producto) {
+    public void guardar(Producto producto, Integer categoriaId) {
+        producto.setCategoriaId(categoriaId);
         productoDAO.guardarProducto(producto);
        
     }
