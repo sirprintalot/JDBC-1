@@ -19,10 +19,10 @@ public class CategoriaController {
 	public List<Categoria> listar() {
 		return categoriaDao.listar();
 	}
-
-    public List<?> cargaReporte() {
-        // TODO
-        return new ArrayList<>();
+    
+//    31/08/2023
+    public List<Categoria> cargaReporte() {
+        return this.listar();
     }
 
 }

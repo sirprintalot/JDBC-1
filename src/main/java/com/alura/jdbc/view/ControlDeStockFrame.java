@@ -55,10 +55,14 @@ public class ControlDeStockFrame extends JFrame {
         tabla = new JTable();
 
         modelo = (DefaultTableModel) tabla.getModel();
+
+//        TODO add new column for categoria and set column titles.
         modelo.addColumn("Identificador del Producto");
         modelo.addColumn("Nombre del Producto");
         modelo.addColumn("Descripción del Producto");
         modelo.addColumn("Cantidad");
+//        modelo.addColumn("Categoría");
+
 
         cargarTabla();
 
@@ -78,7 +82,7 @@ public class ControlDeStockFrame extends JFrame {
 
         setSize(800, 600);
         setVisible(true);
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(null );
         setResizable(false);
     }
 

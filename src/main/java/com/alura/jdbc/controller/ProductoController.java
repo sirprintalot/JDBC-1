@@ -21,18 +21,21 @@ public class ProductoController {
          productoDAO.modificarProducto(producto);
     }
 
-// 28/08/2023
+
     public int eliminar(List<Integer> ids) {
          return productoDAO.eliminarProductos(ids);
     }
 
-//    21/08/2023
 
     public List<Producto> listar() {
         return productoDAO.listarProducto();
     }
 
-// 2023/08/23
+//    29/08/2023
+    public List<Producto> listar(Categoria categoria){
+        return productoDAO.listarProducto(categoria.getId());
+    }
+
 
     public void guardar(Producto producto, Integer categoriaId) {
         producto.setCategoriaId(categoriaId);
