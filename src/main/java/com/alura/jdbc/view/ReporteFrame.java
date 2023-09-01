@@ -15,7 +15,7 @@ public class ReporteFrame extends JFrame {
 
     private JTable tablaReporte;
     private DefaultTableModel modelo;
-    private ProductoController productoController;
+//    private ProductoController productoController;
 
     private CategoriaController categoriaController;
 
@@ -23,7 +23,7 @@ public class ReporteFrame extends JFrame {
         super("Reporte de produtos del stock");
 
         this.categoriaController = new CategoriaController();
-        this.productoController = new ProductoController();
+//        this.productoController = new ProductoController();
 
         Container container = getContentPane();
         setLayout(null);
@@ -43,6 +43,7 @@ public class ReporteFrame extends JFrame {
         setSize(600, 400);
         setVisible(true);
         setLocationRelativeTo(controlDeStockFrame);
+        setResizable(false);
     }
 
     private void cargaReporte() {
@@ -52,18 +53,23 @@ public class ReporteFrame extends JFrame {
         modelo.addRow(new Object[]{""});
 
         var contenido = categoriaController.cargaReporte();
-        
+
         contenido.forEach(categoria -> {modelo
                 .addRow(new Object[] {categoria});
             
-        var productos = this.productoController.listar(categoria);
+//        var productos = this.productoController.listar(categoria); reemplazamos esto con el nuevo metodo
+//            de categoria y categoriaDAO
+
+            var productos = categoria.getProductos();
+        int counter = 1;
 
             for (Producto producto : productos) {
                  modelo.addRow(new Object[]{
-                         "**",
+                         counter,
                          producto.getNombre(),
                          producto.getCantidad()
                  });
+              counter++;
             }
         });
     }

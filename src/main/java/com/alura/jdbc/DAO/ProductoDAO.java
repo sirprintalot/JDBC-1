@@ -152,16 +152,18 @@ public class ProductoDAO {
         final Connection con = new ConnectionFactory().recuperaConexion();
         List<Producto> resultList = new ArrayList<>();
         try (con) {
-            final PreparedStatement preparedStatement = con.prepareStatement("SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD FROM " +
-                    "PRODUCTS WHERE categoria_id = ?");
-            try (preparedStatement) {
 
+            var sqlQuery =  "SELECT ID, NOMBRE, DESCRIPCION, CANTIDAD FROM " +
+                    "PRODUCTS WHERE categoria_id = ?";
+            final PreparedStatement preparedStatement = con.prepareStatement(sqlQuery);
+
+            try (preparedStatement) {
                 preparedStatement.setInt(1, categoriaId);
                 preparedStatement.execute();
                 ResultSet resultSet = preparedStatement.getResultSet();
 
                 while (resultSet.next()) {
-
+                    System.out.println(sqlQuery);
                     Producto fila = new Producto(resultSet.getInt("ID"),
                             resultSet.getString("NOMBRE"),
                             resultSet.getString("DESCRIPCION"),

@@ -22,7 +22,11 @@ public class CategoriaController {
     
 //    31/08/2023
     public List<Categoria> cargaReporte() {
-        return this.listar();
+
+//        return this.listar(); n+1 method
+        return this.categoriaDao.listarConProductos();
     }
+
+
 
 }

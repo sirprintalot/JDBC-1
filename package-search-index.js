@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.alura.jdbc"},{"l":"com.alura.jdbc.controller"},{"l":"com.alura.jdbc.DAO"},{"l":"com.alura.jdbc.factory"},{"l":"com.alura.jdbc.modelo"},{"l":"com.alura.jdbc.pruebas"},{"l":"com.alura.jdbc.view"}]
