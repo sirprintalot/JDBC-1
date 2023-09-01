@@ -1,9 +1,9 @@
 package com.alura.jdbc.view;
 
-import java.awt.Container;
+import java.awt.*;
 
-import javax.swing.JFrame;
-import javax.swing.JTable;
+import javax.swing.*;
+import javax.swing.border.*;
 import javax.swing.table.DefaultTableModel;
 
 import com.alura.jdbc.controller.*;
@@ -18,6 +18,8 @@ public class ReporteFrame extends JFrame {
 
     private JTable tablaReporte;
     private DefaultTableModel modelo;
+    private JScrollPane scroll_table;
+    
 //    private ProductoController productoController;
 
     private CategoriaController categoriaController;
@@ -30,15 +32,22 @@ public class ReporteFrame extends JFrame {
     public ReporteFrame(ControlDeStockFrame controlDeStockFrame) {
         super("Reporte de produtos del stock");
 
+
         this.categoriaController = new CategoriaController();
 //        this.productoController = new ProductoController();
 
         Container container = getContentPane();
         setLayout(null);
-
+        
         tablaReporte = new JTable();
-        tablaReporte.setBounds(0, 0, 600, 400);
+//        tablaReporte.setBounds(0, 0, 600, 400);
+//        tablaReporte.setBorder(BorderFactory.createLineBorder(Color.black));
         container.add(tablaReporte);
+
+        scroll_table = new JScrollPane(tablaReporte);
+        scroll_table.setBounds(0, 0, 650, 420);
+        scroll_table.setBorder(new EmptyBorder(20, 10, 30, 10));
+        container.add(scroll_table);
 
         modelo = (DefaultTableModel) tablaReporte.getModel();
         modelo.addColumn("");
@@ -48,7 +57,7 @@ public class ReporteFrame extends JFrame {
 
         cargaReporte();
 
-        setSize(600, 400);
+        setSize(650, 450);
         setVisible(true);
         setLocationRelativeTo(controlDeStockFrame);
         setResizable(false);

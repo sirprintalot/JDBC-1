@@ -156,11 +156,12 @@ public class ProductoDAO {
 
             final PreparedStatement preparedStatement = con.prepareStatement(updateSQl, Statement.RETURN_GENERATED_KEYS);
             try (preparedStatement) {
-//                preparedStatement.setString(1, nombre);
-//                preparedStatement.setString(2, descripcion);
-//                preparedStatement.setInt(3, cantidad);
-//                Statement statement = con.createStatement();
-                ejecutaRegistro(producto, preparedStatement);
+                preparedStatement.setString(1, producto.getNombre());
+                preparedStatement.setString(2, producto.getDescripcion());
+                preparedStatement.setInt(3, producto.getCantidad());
+                Statement statement = con.createStatement();
+
+//                ejecutaRegistro(producto, preparedStatement);
 
                 int rowsAffected = preparedStatement.executeUpdate();
                 if (rowsAffected == 1) {

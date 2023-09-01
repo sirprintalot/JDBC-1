@@ -7,13 +7,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import com.alura.jdbc.controller.CategoriaController;
@@ -31,12 +25,16 @@ public class ControlDeStockFrame extends JFrame {
     private JTextField textoNombre, textoDescripcion, textoCantidad;
 //    29/08/2023
     private JComboBox<Categoria> comboCategoria;
+    
+// TODO  add a scroll bar
+    private JScrollPane scroll_table;
 
     private JButton botonGuardar, botonModificar, botonLimpiar, botonEliminar, botonReporte;
     private JTable tabla;
     private DefaultTableModel modelo;
     private ProductoController productoController;
     private CategoriaController categoriaController;
+
 
     /**
      * Instantiates a new Control de stock frame.
@@ -72,7 +70,7 @@ public class ControlDeStockFrame extends JFrame {
 
         cargarTabla();
 
-        tabla.setBounds(10, 205, 760, 280);
+        tabla.setBounds(10, 205, 780, 280);
 
         botonEliminar = new JButton("Eliminar");
         botonModificar = new JButton("Modificar");
@@ -85,6 +83,7 @@ public class ControlDeStockFrame extends JFrame {
         container.add(botonEliminar);
         container.add(botonModificar);
         container.add(botonReporte);
+
 
         setSize(800, 600);
         setVisible(true);
