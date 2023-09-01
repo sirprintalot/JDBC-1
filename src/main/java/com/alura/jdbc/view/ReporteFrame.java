@@ -9,6 +9,9 @@ import javax.swing.table.DefaultTableModel;
 import com.alura.jdbc.controller.*;
 import com.alura.jdbc.modelo.*;
 
+/**
+ * The type Reporte frame.
+ */
 public class ReporteFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -19,6 +22,11 @@ public class ReporteFrame extends JFrame {
 
     private CategoriaController categoriaController;
 
+    /**
+     * Instantiates a new Reporte frame.
+     *
+     * @param controlDeStockFrame the control de stock frame
+     */
     public ReporteFrame(ControlDeStockFrame controlDeStockFrame) {
         super("Reporte de produtos del stock");
 

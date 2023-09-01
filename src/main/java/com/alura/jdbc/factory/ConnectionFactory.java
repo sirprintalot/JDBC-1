@@ -5,10 +5,16 @@ import com.mchange.v2.c3p0.*;
 import javax.sql.*;
 import java.sql.*;
 
+/**
+ * The type Connection factory.
+ */
 public class ConnectionFactory {
 
     private DataSource dataSource;
 
+    /**
+     * Instantiates a new Connection factory.
+     */
     public ConnectionFactory(){
         var pooleDataSource = new ComboPooledDataSource();
         pooleDataSource.setJdbcUrl("jdbc:mysql://localhost/stock_control?useTimeZone=true&serverTimeZone=UTC");
@@ -18,7 +24,12 @@ public class ConnectionFactory {
 
         this.dataSource = pooleDataSource;
     }
-    
+
+    /**
+     * Recupera conexion connection.
+     *
+     * @return the connection
+     */
     public Connection recuperaConexion()  {
         try {
             return this.dataSource.getConnection();

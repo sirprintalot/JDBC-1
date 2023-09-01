@@ -20,6 +20,9 @@ import com.alura.jdbc.controller.CategoriaController;
 import com.alura.jdbc.controller.ProductoController;
 import com.alura.jdbc.modelo.*;
 
+/**
+ * The type Control de stock frame.
+ */
 public class ControlDeStockFrame extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -35,6 +38,9 @@ public class ControlDeStockFrame extends JFrame {
     private ProductoController productoController;
     private CategoriaController categoriaController;
 
+    /**
+     * Instantiates a new Control de stock frame.
+     */
     public ControlDeStockFrame() {
         super("Productos");
 

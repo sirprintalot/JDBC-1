@@ -5,14 +5,27 @@ import com.alura.jdbc.modelo.*;
 import java.sql.*;
 import java.util.*;
 
+/**
+ * The type Categoria dao.
+ */
 public class CategoriaDao {
 
     private Connection con;
 
+    /**
+     * Instantiates a new Categoria dao.
+     *
+     * @param con the con
+     */
     public CategoriaDao(Connection con) {
         this.con = con;
     }
 
+    /**
+     * Listar list.
+     *
+     * @return the list
+     */
     public List<Categoria> listar() {
          List<Categoria> resultado = new ArrayList<>();
         try {
@@ -37,7 +50,12 @@ public class CategoriaDao {
     }
 
     // new method
-    
+
+    /**
+     * Listar con productos list.
+     *
+     * @return the list
+     */
     public List<Categoria> listarConProductos() {
         List<Categoria> resultado = new ArrayList<>();
         try {

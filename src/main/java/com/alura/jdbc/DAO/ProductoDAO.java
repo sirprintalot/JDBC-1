@@ -7,14 +7,27 @@ import javax.swing.*;
 import java.sql.*;
 import java.util.*;
 
+/**
+ * The type Producto dao.
+ */
 public class ProductoDAO {
 
     private final Connection con;
 
+    /**
+     * Instantiates a new Producto dao.
+     *
+     * @param con the con
+     */
     public ProductoDAO(Connection con) {
         this.con = con;
     }
 
+    /**
+     * Guardar producto.
+     *
+     * @param producto the producto
+     */
     public void guardarProducto(Producto producto) {
 
         int cantidad = producto.getCantidad();
@@ -65,6 +78,11 @@ public class ProductoDAO {
         }
     }
 
+    /**
+     * Listar producto list.
+     *
+     * @return the list
+     */
     public List<Producto> listarProducto() {
         final Connection con = new ConnectionFactory().recuperaConexion();
         List<Producto> resultList = new ArrayList<>();
@@ -94,6 +112,12 @@ public class ProductoDAO {
         }
     }
 
+    /**
+     * Eliminar productos int.
+     *
+     * @param ids the ids
+     * @return the int
+     */
     public int eliminarProductos(List<Integer> ids) {
 
         final Connection con = new ConnectionFactory().recuperaConexion();
@@ -119,6 +143,11 @@ public class ProductoDAO {
         }
     }
 
+    /**
+     * Modificar producto.
+     *
+     * @param producto the producto
+     */
     public void modificarProducto(Producto producto) {
 // revisar bug conexion.
         final Connection con = new ConnectionFactory().recuperaConexion();
@@ -146,7 +175,13 @@ public class ProductoDAO {
         }
     }
 
-    // overloaded method
+    /**
+     * Listar producto list.
+     *
+     * @param categoriaId the categoria id
+     * @return the list
+     */
+// overloaded method
     public List<Producto> listarProducto(int categoriaId) {
         
         final Connection con = new ConnectionFactory().recuperaConexion();
